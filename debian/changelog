@@ -1,3 +1,12 @@
+libpcap (1.1.1-2+squeeze1) stable; urgency=low
+
+  * Backport changes from upstream to fix corruption of snapshot length on
+    live captures (CVE-2011-1935) (closes: #623868).
+  * Backport fix from upstream to fix device detection when the bonding
+    module is loaded (closes: #612803).
+
+ -- Romain Francoise <rfrancoise@debian.org>  Sun, 10 Jul 2011 19:26:04 +0200
+
 libpcap (1.1.1-2) unstable; urgency=low
 
   * debian/patches/50_kfreebsd.diff: Fix configure script to properly
