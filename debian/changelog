@@ -1,3 +1,9 @@
+libpcap (1.4.0-2) UNRELEASED; urgency=low
+
+  * Fix FTBFS on hurd-i386 due to pcap_findalldevs() refactoring.
+
+ -- Romain Francoise <rfrancoise@debian.org>  Sun, 26 May 2013 19:56:10 +0200
+
 libpcap (1.4.0-1) unstable; urgency=low
 
   * New upstream release.

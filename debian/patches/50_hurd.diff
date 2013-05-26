@@ -1,0 +1,15 @@
+Fix FTBFS on hurd-i386.
+
+Index: libpcap/fad-null.c
+===================================================================
+--- libpcap.orig/fad-null.c    2013-05-26 19:28:46.000000000 +0200
++++ libpcap/fad-null.c 2013-05-26 19:49:48.000000000 +0200
+@@ -53,7 +53,7 @@
+  * packet capture.
+  */
+ int
+-pcap_findalldevs(pcap_if_t **alldevsp, char *errbuf)
++pcap_findalldevs_interfaces(pcap_if_t **alldevsp, char *errbuf)
+ {
+       /*
+        * Succeed, but don't return any interfaces; we return only those
