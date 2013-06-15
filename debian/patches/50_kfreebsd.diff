@@ -19,7 +19,7 @@ Support for GNU/kFreeBSD, by Aurelien Jarno and others.
  	V_PCAP=bpf
  elif test -r /usr/include/net/pfilt.h ; then
  	V_PCAP=pf
-@@ -506,6 +507,7 @@
+@@ -533,6 +534,7 @@
  #endif
  #include <net/bpf.h>
  		    ])
