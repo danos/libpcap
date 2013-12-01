@@ -2,7 +2,7 @@ Support for GNU/kFreeBSD, by Aurelien Jarno and others.
 
 --- a/configure.in
 +++ b/configure.in
-@@ -106,6 +106,7 @@
+@@ -109,6 +109,7 @@
  AC_CHECK_HEADERS(linux/types.h)
  AC_CHECK_HEADERS(linux/if_packet.h netpacket/packet.h netpacket/if_packet.h)
  AC_CHECK_HEADERS(net/pfvar.h, , , [#include <sys/types.h>
@@ -10,7 +10,7 @@ Support for GNU/kFreeBSD, by Aurelien Jarno and others.
  #include <sys/socket.h>
  #include <net/if.h>])
  if test "$ac_cv_header_net_pfvar_h" = yes; then
-@@ -306,7 +307,7 @@
+@@ -309,7 +310,7 @@
  	#
  	V_PCAP=bpf
  	AC_DEFINE(HAVE_CLONING_BPF,1,[define if you have a cloning BPF device])
@@ -19,7 +19,7 @@ Support for GNU/kFreeBSD, by Aurelien Jarno and others.
  	V_PCAP=bpf
  elif test -r /usr/include/net/pfilt.h ; then
  	V_PCAP=pf
-@@ -533,6 +534,7 @@
+@@ -548,6 +549,7 @@
  #endif
  #include <net/bpf.h>
  		    ])
