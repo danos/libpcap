@@ -1,3 +1,13 @@
+libpcap (1.5.1-1) unstable; urgency=low
+
+  * New upstream version, API additions: pcap_set_immediate_mode(),
+    pcap_{get,set}_tstamp_precision(), pcap_open_dead_with_tstamp_precision(),
+    pcap_{,f}open_offline_with_tstamp_precision().
+  * debian/patches/50_hurd.diff: Dropped, merged upstream.
+  * Set Standards-Version to 3.9.5.
+
+ -- Romain Francoise <rfrancoise@debian.org>  Sun, 01 Dec 2013 18:28:34 +0100
+
 libpcap (1.4.0-2) unstable; urgency=low
 
   * Fix FTBFS on hurd-i386 due to pcap_findalldevs() refactoring.
