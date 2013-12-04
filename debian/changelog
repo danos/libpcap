@@ -1,3 +1,10 @@
+libpcap (1.5.2-1) unstable; urgency=low
+
+  * New upstream bugfix release, fixes initialization on kernels without
+    TPACKET_V3.
+
+ -- Romain Francoise <rfrancoise@debian.org>  Wed, 04 Dec 2013 13:56:39 +0100
+
 libpcap (1.5.1-1) unstable; urgency=low
 
   * New upstream version, API additions: pcap_set_immediate_mode(),
