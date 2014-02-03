@@ -1,3 +1,9 @@
+libpcap (1.5.3-2) unstable; urgency=low
+
+  * Enable Bluetooth capture on Linux (closes: #737357).
+
+ -- Romain Francoise <rfrancoise@debian.org>  Mon, 03 Feb 2014 22:03:51 +0100
+
 libpcap (1.5.3-1) unstable; urgency=low
 
   * New upstream bugfix release, fixes more TPACKET_V3 issues
