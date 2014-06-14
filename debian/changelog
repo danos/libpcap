@@ -1,3 +1,10 @@
+libpcap (1.5.3-4) unstable; urgency=high
+
+  * Disable zerocopy BPF on kFreeBSD to work around broken atomic support,
+    see #750836 (closes: #750805).
+
+ -- Romain Francoise <rfrancoise@debian.org>  Sat, 14 Jun 2014 13:08:16 +0200
+
 libpcap (1.5.3-3) unstable; urgency=medium
 
   * Add support for packet capture on GNU/Hurd (w/ netdde drivers), patch by
