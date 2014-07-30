@@ -20,11 +20,6 @@
  * MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
  */
 
-#ifndef lint
-static const char rcsid[] _U_ =
-    "@(#) $Header: /tcpdump/master/libpcap/scanner.l,v 1.112 2008-02-06 10:21:30 guy Exp $ (LBL)";
-#endif
-
 #ifdef HAVE_CONFIG_H
 #include "config.h"
 #endif
@@ -324,7 +319,7 @@ hdpc		return HDPC;
 hsls		return HSLS;
 
 [ \r\n\t]		;
-[+\-*/:\[\]!<>()&|=]	return yytext[0];
+[+\-*/%:\[\]!<>()&|\^=]	return yytext[0];
 ">="			return GEQ;
 "<="			return LEQ;
 "!="			return NEQ;
