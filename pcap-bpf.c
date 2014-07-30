@@ -18,10 +18,6 @@
  * WARRANTIES, INCLUDING, WITHOUT LIMITATION, THE IMPLIED WARRANTIES OF
  * MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
  */
-#ifndef lint
-static const char rcsid[] _U_ =
-    "@(#) $Header: /tcpdump/master/libpcap/pcap-bpf.c,v 1.116 2008-09-16 18:42:29 guy Exp $ (LBL)";
-#endif
 
 #ifdef HAVE_CONFIG_H
 #include "config.h"
@@ -1480,6 +1476,9 @@ pcap_activate_bpf(pcap_t *p)
 {
 	struct pcap_bpf *pb = p->priv;
 	int status = 0;
+#ifdef HAVE_BSD_IEEE80211
+	int retv;
+#endif
 	int fd;
 #ifdef LIFNAMSIZ
 	char *zonesep;
@@ -1683,6 +1682,7 @@ pcap_activate_bpf(pcap_t *p)
 		if (ioctl(fd, BIOCGETZMAX, (caddr_t)&zbufmax) < 0) {
 			snprintf(p->errbuf, PCAP_ERRBUF_SIZE, "BIOCGETZMAX: %s",
 			    pcap_strerror(errno));
+			status = PCAP_ERROR;
 			goto bad;
 		}
 
@@ -1709,6 +1709,7 @@ pcap_activate_bpf(pcap_t *p)
 		if (pb->zbuf1 == MAP_FAILED || pb->zbuf2 == MAP_FAILED) {
 			snprintf(p->errbuf, PCAP_ERRBUF_SIZE, "mmap: %s",
 			    pcap_strerror(errno));
+			status = PCAP_ERROR;
 			goto bad;
 		}
 		memset(&bz, 0, sizeof(bz)); /* bzero() deprecated, replaced with memset() */
@@ -1718,12 +1719,14 @@ pcap_activate_bpf(pcap_t *p)
 		if (ioctl(fd, BIOCSETZBUF, (caddr_t)&bz) < 0) {
 			snprintf(p->errbuf, PCAP_ERRBUF_SIZE, "BIOCSETZBUF: %s",
 			    pcap_strerror(errno));
+			status = PCAP_ERROR;
 			goto bad;
 		}
 		(void)strncpy(ifrname, p->opt.source, ifnamsiz);
 		if (ioctl(fd, BIOCSETIF, (caddr_t)&ifr) < 0) {
 			snprintf(p->errbuf, PCAP_ERRBUF_SIZE, "BIOCSETIF: %s: %s",
 			    p->opt.source, pcap_strerror(errno));
+			status = PCAP_ERROR;
 			goto bad;
 		}
 		v = pb->zbufsize - sizeof(struct bpf_zbuf_header);
@@ -1977,11 +1980,12 @@ pcap_activate_bpf(pcap_t *p)
 		/*
 		 * Try to put the interface into monitor mode.
 		 */
-		status = monitor_mode(p, 1);
-		if (status != 0) {
+		retv = monitor_mode(p, 1);
+		if (retv != 0) {
 			/*
 			 * We failed.
 			 */
+			status = retv;
 			goto bad;
 		}
 
