@@ -1,8 +1,10 @@
 libpcap (1.6.1-1) unstable; urgency=medium
 
   * New upstream release.
+  * Amend configure test for new bt-monitor interface to make it fail properly
+    when built with BlueZ 5.x, as it's apparently not compatible yet.
 
- -- Romain Francoise <rfrancoise@debian.org>  Wed, 30 Jul 2014 20:50:38 +0200
+ -- Romain Francoise <rfrancoise@debian.org>  Wed, 30 Jul 2014 21:05:16 +0200
 
 libpcap (1.5.3-4) unstable; urgency=high
 
