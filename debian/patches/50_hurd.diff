@@ -11,7 +11,7 @@ Subject: [PATCH] Debian GNU/Hurd (with NETDDE) support
 
 --- a/configure.in
 +++ b/configure.in
-@@ -323,6 +323,8 @@
+@@ -322,6 +322,8 @@
  	V_PCAP=linux
  elif test -r /usr/include/net/raw.h ; then
  	V_PCAP=snoop
@@ -20,7 +20,7 @@ Subject: [PATCH] Debian GNU/Hurd (with NETDDE) support
  elif test -r /usr/include/odmi.h ; then
  	#
  	# On AIX, the BPF devices might not yet be present - they're
-@@ -550,6 +552,10 @@
+@@ -549,6 +551,10 @@
  		    ])
  	;;
  
