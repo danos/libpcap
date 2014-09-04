@@ -1,3 +1,9 @@
+libpcap (1.6.2-1) unstable; urgency=medium
+
+  * New upstream release. 
+
+ -- Romain Francoise <rfrancoise@debian.org>  Thu, 04 Sep 2014 19:06:26 +0200
+
 libpcap (1.6.1-1) unstable; urgency=medium
 
   * New upstream release.
