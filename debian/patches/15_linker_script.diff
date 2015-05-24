@@ -2,7 +2,7 @@ Use a linker script.
 
 --- a/Makefile.in
 +++ b/Makefile.in
-@@ -70,7 +70,7 @@
+@@ -71,7 +71,7 @@
  
  # Standard CFLAGS
  FULL_CFLAGS = $(CCOPT) $(INCLS) $(DEFS) $(CFLAGS) $(CPPFLAGS)
