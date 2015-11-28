@@ -1,3 +1,10 @@
+libpcap (1.7.4-2) unstable; urgency=medium
+
+  * Only override arch-dependent dh targets (closes: #806061).
+  * Update versioned build-depends on debhelper accordingly.
+
+ -- Romain Francoise <rfrancoise@debian.org>  Sat, 28 Nov 2015 18:54:26 +0100
+
 libpcap (1.7.4-1) unstable; urgency=medium
 
   * New upstream bugfix release.
