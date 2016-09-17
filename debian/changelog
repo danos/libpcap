@@ -1,3 +1,14 @@
+libpcap (1.7.4-3) unstable; urgency=medium
+
+  * Drop unnecessary build-depends on perl (closes: #816187).
+  * Hardcode packet interface type in debian/rules to make cross-building
+    easier, patch by Samuel Thibault (closes: #816188).
+  * Stop patching config.{guess,sub}, dh_update_autotool_config now
+    handles that automatically for us.
+  * Set Standards-Version to 3.9.8.
+
+ -- Romain Francoise <rfrancoise@debian.org>  Sat, 17 Sep 2016 12:07:26 +0200
+
 libpcap (1.7.4-2) unstable; urgency=medium
 
   * Only override arch-dependent dh targets (closes: #806061).
