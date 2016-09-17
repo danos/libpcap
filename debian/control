@@ -8,8 +8,7 @@ Build-Depends: autotools-dev,
                dh-autoreconf,
                flex,
                libbluetooth-dev [linux-any],
-               linux-libc-dev (>= 2.6.27) [i386],
-               perl
+               linux-libc-dev (>= 2.6.27) [i386]
 Standards-Version: 3.9.8
 Homepage: http://www.tcpdump.org/
 Vcs-Browser: http://anonscm.debian.org/gitweb/?p=users/rfrancoise/libpcap.git
