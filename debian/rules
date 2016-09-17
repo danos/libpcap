@@ -1,5 +1,17 @@
 #!/usr/bin/make -f
 
+DEB_HOST_ARCH_OS := $(shell dpkg-architecture -qDEB_HOST_ARCH_OS)
+
+ifeq ($(DEB_HOST_ARCH_OS),linux)
+export with_pcap=linux
+endif
+ifeq ($(DEB_HOST_ARCH_OS),kfreebsd)
+export with_pcap=bpf
+endif
+ifeq ($(DEB_HOST_ARCH_OS),hurd)
+export with_pcap=hurd
+endif
+
 %:
 	dh $@ --with autoreconf
 
