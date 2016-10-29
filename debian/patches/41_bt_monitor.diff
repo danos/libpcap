@@ -1,9 +1,9 @@
 Include bluetooth/mgmt.h in bt-monitor compile test to make it fail
 with BlueZ 5.x.
 
---- a/configure.in
-+++ b/configure.in
-@@ -1519,6 +1519,7 @@
+--- a/configure.ac
++++ b/configure.ac
+@@ -1649,6 +1649,7 @@
  [
  #include <bluetooth/bluetooth.h>
  #include <bluetooth/hci.h>

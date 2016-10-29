@@ -1,7 +1,7 @@
 Support for GNU/kFreeBSD, by Aurelien Jarno and others.
 
---- a/configure.in
-+++ b/configure.in
+--- a/configure.ac
++++ b/configure.ac
 @@ -108,6 +108,7 @@
  AC_CHECK_HEADERS(linux/types.h)
  AC_CHECK_HEADERS(linux/if_packet.h netpacket/packet.h netpacket/if_packet.h)
@@ -10,16 +10,16 @@ Support for GNU/kFreeBSD, by Aurelien Jarno and others.
  #include <sys/socket.h>
  #include <net/if.h>])
  if test "$ac_cv_header_net_pfvar_h" = yes; then
-@@ -318,7 +319,7 @@
+@@ -336,7 +337,7 @@
+ 	# We have BPF, so build valgrindtest with "make test".
  	#
- 	V_PCAP=bpf
- 	AC_DEFINE(HAVE_CLONING_BPF,1,[define if you have a cloning BPF device])
+ 	VALGRINDTEST=valgrindtest
 -elif test -r /dev/bpf0 ; then
 +elif test -r /dev/bpf0 || test -r /usr/include/net/bpf.h ; then
  	V_PCAP=bpf
- elif test -r /usr/include/net/pfilt.h ; then
- 	V_PCAP=pf
-@@ -566,6 +567,7 @@
+ 
+ 	#
+@@ -601,6 +602,7 @@
  #endif
  #include <net/bpf.h>
  		    ])

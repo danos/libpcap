@@ -9,10 +9,10 @@ Subject: [PATCH] Debian GNU/Hurd (with NETDDE) support
  2 files changed, 261 insertions(+)
  create mode 100644 pcap-hurd.c
 
---- a/configure.in
-+++ b/configure.in
-@@ -332,6 +332,8 @@
- 	V_PCAP=linux
+--- a/configure.ac
++++ b/configure.ac
+@@ -361,6 +361,8 @@
+ 	VALGRINDTEST=valgrindtest
  elif test -r /usr/include/net/raw.h ; then
  	V_PCAP=snoop
 +elif test -r /usr/include/hurd.h ; then
@@ -20,7 +20,7 @@ Subject: [PATCH] Debian GNU/Hurd (with NETDDE) support
  elif test -r /usr/include/odmi.h ; then
  	#
  	# On AIX, the BPF devices might not yet be present - they're
-@@ -566,6 +568,10 @@
+@@ -601,6 +603,10 @@
  		    ])
  	;;
  
@@ -29,8 +29,8 @@ Subject: [PATCH] Debian GNU/Hurd (with NETDDE) support
 +	;;
 +
  dag)
- 	V_DEFS="$V_DEFS -DDAG_ONLY"
- 	;;
+ 	#
+ 	# --with-pcap=dag is the only way to get here, and it means
 --- /dev/null
 +++ b/pcap-hurd.c
 @@ -0,0 +1,255 @@
