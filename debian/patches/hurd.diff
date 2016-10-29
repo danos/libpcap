@@ -192,7 +192,7 @@ Subject: [PATCH] Debian GNU/Hurd (with NETDDE) support
 +	ph = p->priv;
 +
 +	/* Try devnode first */
-+	master = file_name_lookup(p->opt.source, O_READ | O_WRITE, 0);
++	master = file_name_lookup(p->opt.device, O_READ | O_WRITE, 0);
 +
 +	if (master != MACH_PORT_NULL)
 +		kr = device_open(master, D_WRITE | D_READ, "eth", &ph->mach_dev);
@@ -206,7 +206,7 @@ Subject: [PATCH] Debian GNU/Hurd (with NETDDE) support
 +			goto error;
 +		}
 +
-+		kr = device_open(master, D_READ | D_WRITE, p->opt.source,
++		kr = device_open(master, D_READ | D_WRITE, p->opt.device,
 +				 &ph->mach_dev);
 +	}
 +
@@ -267,12 +267,12 @@ Subject: [PATCH] Debian GNU/Hurd (with NETDDE) support
 +}
 +
 +pcap_t *
-+pcap_create_interface(const char *device, char *ebuf)
++pcap_create_interface(const char *device _U_, char *ebuf)
 +{
 +	struct pcap_hurd *ph;
 +	pcap_t *p;
 +
-+	p = pcap_create_common(device, ebuf, sizeof (struct pcap_hurd));
++	p = pcap_create_common(ebuf, sizeof (struct pcap_hurd));
 +
 +	if (p == NULL)
 +		return NULL;

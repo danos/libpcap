@@ -1,3 +1,9 @@
+libpcap (1.8.1-2) UNRELEASED; urgency=medium
+
+  * Adjust Hurd patch to internal API changes to fix FTBFS.
+
+ -- Romain Francoise <rfrancoise@debian.org>  Sat, 29 Oct 2016 23:38:17 +0200
+
 libpcap (1.8.1-1) unstable; urgency=medium
 
   * New upstream release.
