@@ -27,3 +27,13 @@ Support for GNU/kFreeBSD, by Aurelien Jarno and others.
  	;;
  
  hurd)
+--- a/pcap-bpf.c
++++ b/pcap-bpf.c
+@@ -29,6 +29,7 @@
+ #endif
+ #include <sys/socket.h>
+ #include <time.h>
++#include <sys/kern/time.h>
+ /*
+  * <net/bpf.h> defines ioctls, but doesn't include <sys/ioccom.h>.
+  *
