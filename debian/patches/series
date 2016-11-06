@@ -5,3 +5,4 @@ usb-bus-path.diff
 bluez-build.diff
 hurd.diff
 kfreebsd.diff
+disable-remote.diff
