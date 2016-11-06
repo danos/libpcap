@@ -11,7 +11,7 @@ Build-Depends: autotools-dev,
                linux-libc-dev (>= 2.6.27) [i386]
 Standards-Version: 3.9.8
 Homepage: http://www.tcpdump.org/
-Vcs-Browser: http://anonscm.debian.org/gitweb/?p=users/rfrancoise/libpcap.git
+Vcs-Browser: https://anonscm.debian.org/cgit/users/rfrancoise/libpcap.git/
 Vcs-Git: git://anonscm.debian.org/users/rfrancoise/libpcap.git
 
 Package: libpcap-dev
