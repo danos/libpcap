@@ -6,3 +6,4 @@ bluez-build.diff
 hurd.diff
 kfreebsd.diff
 disable-remote.diff
+man-errors.diff
