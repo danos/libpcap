@@ -30,6 +30,7 @@ Depends: libc6-dev,
          ${misc:Depends}
 Conflicts: libpcap-dev (<< 0.9),
            libpcap0.7-dev
+Multi-Arch: same
 Description: development library and header files for libpcap0.8
  Headers, static libraries, and documentation for the libpcap library.
  .
