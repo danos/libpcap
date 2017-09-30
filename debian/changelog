@@ -1,3 +1,13 @@
+libpcap (1.8.1-5) unstable; urgency=medium
+
+  * Remove unused RPATH handling from pcap-config: now that we no longer
+    output the -L option in front, it causes --libs output to begin with a
+    space, which displeases cmake (closes: #876123).
+  * Make libpcap-dev arch:any to allow cross-building, as suggested by
+    Helmut Grohne (closes: #820829).
+
+ -- Romain Francoise <rfrancoise@debian.org>  Sat, 30 Sep 2017 17:46:37 +0200
+
 libpcap (1.8.1-4) unstable; urgency=medium
 
   * Don't include arch-dependent paths in pcap-config --libs output.
