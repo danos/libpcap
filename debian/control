@@ -19,6 +19,7 @@ Section: libdevel
 Architecture: any
 Depends: libpcap0.8-dev,
          ${misc:Depends}
+Multi-Arch: same
 Description: development library for libpcap (transitional package)
  Empty package to facilitate upgrades, can be safely removed.
 
