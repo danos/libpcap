@@ -66,7 +66,7 @@ Description: system interface for user-level packet capture
 
 Package: libpcap0.8-dbg
 Section: debug
-Priority: extra
+Priority: optional
 Architecture: any
 Depends: libpcap0.8 (= ${binary:Version}),
          ${misc:Depends},
