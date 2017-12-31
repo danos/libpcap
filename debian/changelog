@@ -1,13 +1,15 @@
 libpcap (1.8.1-6) unstable; urgency=medium
 
+  * debian/watch: add pgpsigurlmangle option.
+  * Add upstream signing key in debian/upstream.
   * Make transitional package libpcap-dev 'Multi-Arch: same'.
+  * Use new URLs on salsa.debian.org for Vcs-* fields.
   * Lintian cleanups:
     + Make libpcap0.8-dbg 'Priority: optional'.
     + Use /usr/share/dpkg/architecture.mk instead of setting DEB_HOST_ARCH_OS.
     + Bump Standards-Version to 4.1.2.
-  * Use new URLs on salsa.debian.org for Vcs-* fields.
 
- -- Romain Francoise <rfrancoise@debian.org>  Sun, 31 Dec 2017 16:47:34 +0100
+ -- Romain Francoise <rfrancoise@debian.org>  Sun, 31 Dec 2017 16:56:33 +0100
 
 libpcap (1.8.1-5) unstable; urgency=medium
 
@@ -562,7 +564,7 @@ libpcap0.8 (0.8.3-2) unstable; urgency=low
   * debian/control:
     + Put back URL markers in description.
     + Switch Maintainer and Uploaders fields to match reality.
-  * debian/patches/30_man_fixes.dpatch: Patch to fix some inconsistencies 
+  * debian/patches/30_man_fixes.dpatch: Patch to fix some inconsistencies
     in the upstream man page (tcpdump is in section 8, not 1).
   * debian/patches/00list: Add 30_man_fixes.
 
@@ -579,7 +581,7 @@ libpcap0.8 (0.8.3-1) unstable; urgency=low
     libpcap-dev package is provided by libpcap0.7 for now.
   * debian/copyright: Rewrite.  Licensing information is now complete in
     the upstream tarball.
-  * debian/control: 
+  * debian/control:
     + Update source and binary package names.
     + Build-Depend on dpatch, perl.
     + Bump Standards-Version to 3.6.1.0.
@@ -590,9 +592,9 @@ libpcap0.8 (0.8.3-1) unstable; urgency=low
     + Compute major/minor versions from the changelog instead of
       hardcoding them.
   * debian/patches: New directory.
-  * debian/patches/10_shared_lib.dpatch: Patch split off the Debian diff 
+  * debian/patches/10_shared_lib.dpatch: Patch split off the Debian diff
     to build a shared library (upstream does not support it).
-  * debian/patches/20_mac_syntax.dpatch: Patch split off the Debian diff 
+  * debian/patches/20_mac_syntax.dpatch: Patch split off the Debian diff
     to support more MAC address syntaxes (by Torsten Landschoff).
   * debian/patches/00list: New file (patch list).
 
@@ -624,7 +626,7 @@ libpcap (0.7.2-3) unstable; urgency=low
 
 libpcap (0.7.2-2) unstable; urgency=low
 
-  * debian/control: 
+  * debian/control:
     + Adding myself as co-maintainer, with Torsten's blessing.
     + Repeat extended description in libpcap-dev description
       (closes: #209728)
@@ -652,7 +654,7 @@ libpcap (0.7.1-1) unstable; urgency=low
   * Rename the library package to libpcap0.7 and change the SONAME so that we
     can account for interface changes (closes: #132359).
   * Run ldconfig as appropriate (lintian).
-  * Remove watch.ex template and the silly symlink from libpcap-dev's 
+  * Remove watch.ex template and the silly symlink from libpcap-dev's
     documentation to libpcap0 (lintian).
 
  -- Torsten Landschoff <torsten@debian.org>  Sat,  3 Aug 2002 23:33:56 +0200
@@ -661,8 +663,8 @@ libpcap (0.6.2-2) unstable; urgency=low
 
   * debian/control: Change section of libpcap0 from net to libs
     (Debian installer message).
-  * aclocal.m4: Treat the ia64 as a cpu which can't handle unaligned 
-    memory access (closes: #112152). Thanks for the report go to 
+  * aclocal.m4: Treat the ia64 as a cpu which can't handle unaligned
+    memory access (closes: #112152). Thanks for the report go to
     John R. Daily.
 
  -- Torsten Landschoff <torsten@debian.org>  Fri, 14 Sep 2001 10:15:52 +0200
@@ -697,7 +699,7 @@ libpcap (0.5.2-2) unstable; urgency=low
 
   * Update config.guess and config.sub (Closes #26031)
   * Source builds would not always work. Fix that.
-  * Kernel interface problem is really a module not loaded problem. 
+  * Kernel interface problem is really a module not loaded problem.
     Note this in README.Debian. (Closes #21356)
 
  -- Anand Kumria <wildfire@progsoc.org>  Tue, 28 Nov 2000 02:03:25 +1100
@@ -713,7 +715,7 @@ libpcap (0.5.2-1) unstable; urgency=low
 libpcap (0.4a6-3) unstable; urgency=low
 
   * New maintainer.
-  * scanner.l: Allow a 12 digit hex number as ether address as well as 
+  * scanner.l: Allow a 12 digit hex number as ether address as well as
     BB.BB.BB.BB.BB.BB (closes: #48735)
   * nametoaddr.c (pcap_ether_aton): Adjust for change in scanner.l
 
@@ -777,5 +779,3 @@ libpcap (0.3-1) unstable; urgency=low
   * Makefile.in: supports libpcap.so target.
 
  -- Karl Sackett <krs@debian.org>  Wed, 8 Jan 1997 09:38:31 -0600
-
-
