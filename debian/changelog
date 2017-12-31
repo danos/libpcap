@@ -1,3 +1,14 @@
+libpcap (1.8.1-6) unstable; urgency=medium
+
+  * Make transitional package libpcap-dev 'Multi-Arch: same'.
+  * Lintian cleanups:
+    + Make libpcap0.8-dbg 'Priority: optional'.
+    + Use /usr/share/dpkg/architecture.mk instead of setting DEB_HOST_ARCH_OS.
+    + Bump Standards-Version to 4.1.2.
+  * Use new URLs on salsa.debian.org for Vcs-* fields.
+
+ -- Romain Francoise <rfrancoise@debian.org>  Sun, 31 Dec 2017 16:47:34 +0100
+
 libpcap (1.8.1-5) unstable; urgency=medium
 
   * Remove unused RPATH handling from pcap-config: now that we no longer
