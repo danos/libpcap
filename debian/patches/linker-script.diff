@@ -2,10 +2,10 @@ Use a linker script.
 
 --- a/Makefile.in
 +++ b/Makefile.in
-@@ -71,7 +71,7 @@
+@@ -78,7 +78,7 @@
  
- # Standard CFLAGS
- FULL_CFLAGS = $(CCOPT) $(INCLS) $(DEFS) $(CFLAGS) $(CPPFLAGS)
+ # Standard CFLAGS for building members of a shared library
+ FULL_CFLAGS = $(CCOPT) $(SHLIB_CCOPT) $(INCLS) $(DEFS) $(CFLAGS) $(CPPFLAGS)
 -CFLAGS_SHARED = -shared -Wl,-soname,$(SOLIBRARY).$(MAJ)
 +CFLAGS_SHARED = -shared -Wl,-soname,$(SOLIBRARY).$(MAJ) -Wl,--version-script=libpcap-symbols.lds
  
