@@ -13,7 +13,7 @@ Use a linker script.
  INSTALL_PROGRAM = @INSTALL_PROGRAM@
 --- /dev/null
 +++ b/libpcap-symbols.lds
-@@ -0,0 +1,99 @@
+@@ -0,0 +1,104 @@
 +{
 +  global:
 +    bpf_dump;
@@ -110,6 +110,11 @@ Use a linker script.
 +    pcap_fopen_offline_with_tstamp_precision;
 +    /* introduced in pcap 1.7 */
 +    pcap_dump_open_append;
++    /* introduced in pcap 1.9.0 */
++    pcap_bufsize;
++    pcap_dump_ftell64;
++    pcap_get_required_select_timeout;
++    pcap_set_protocol_linux;	/* linux-only */
 +  local:
 +    *;
 +};
