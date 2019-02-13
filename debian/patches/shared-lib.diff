@@ -112,24 +112,7 @@ build a shared library.
  #
  # Remote pcap daemon.
  #
-@@ -538,7 +569,7 @@
- 
- FORCE:
- 
--install: install-shared install-archive libpcap.pc pcap-config @INSTALL_RPCAPD@
-+install: install-shared install-archive pcap-config @INSTALL_RPCAPD@
- 	[ -d $(DESTDIR)$(libdir) ] || \
- 	    (mkdir -p $(DESTDIR)$(libdir); chmod 755 $(DESTDIR)$(libdir))
- 	[ -d $(DESTDIR)$(includedir) ] || \
-@@ -561,7 +592,6 @@
- 	$(INSTALL_PROGRAM) pcap-config $(DESTDIR)$(bindir)/pcap-config
- 	[ -d $(DESTDIR)$(libdir)/pkgconfig ] || \
- 	    (mkdir -p $(DESTDIR)$(libdir)/pkgconfig; chmod 755 $(DESTDIR)$(libdir)/pkgconfig)
--	$(INSTALL_DATA) libpcap.pc $(DESTDIR)$(libdir)/pkgconfig/libpcap.pc
- 	for i in $(MAN1); do \
- 		$(INSTALL_DATA) $(srcdir)/$$i \
- 		    $(DESTDIR)$(mandir)/man1/$$i; done
-@@ -617,11 +647,9 @@
+@@ -617,11 +648,9 @@
  install-shared-so: libpcap.so
  	[ -d $(DESTDIR)$(libdir) ] || \
  	    (mkdir -p $(DESTDIR)$(libdir); chmod 755 $(DESTDIR)$(libdir))
