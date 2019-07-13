@@ -1,3 +1,14 @@
+libpcap (1.9.0-2) unstable; urgency=medium
+
+  [ Luca Boccassi ]
+  * Install upstream pkg-config file (closes: #922219).
+
+  [ Romain Francoise ]
+  * Bump Standards-Version to 4.4.0.
+  * Upload to unstable.
+
+ -- Romain Francoise <rfrancoise@debian.org>  Sat, 13 Jul 2019 20:48:26 +0200
+
 libpcap (1.9.0-1) experimental; urgency=medium
 
   * New upstream release:
