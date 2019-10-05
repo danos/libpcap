@@ -5,7 +5,7 @@ Use a linker script.
 @@ -78,7 +78,7 @@
  
  # Standard CFLAGS for building members of a shared library
- FULL_CFLAGS = $(CCOPT) $(SHLIB_CCOPT) $(INCLS) $(DEFS) $(CFLAGS) $(CPPFLAGS)
+ FULL_CFLAGS = $(CCOPT) @V_LIB_CCOPT_FAT@ $(SHLIB_CCOPT) $(INCLS) $(DEFS) $(CFLAGS) $(CPPFLAGS)
 -CFLAGS_SHARED = -shared -Wl,-soname,$(SOLIBRARY).$(MAJ)
 +CFLAGS_SHARED = -shared -Wl,-soname,$(SOLIBRARY).$(MAJ) -Wl,--version-script=libpcap-symbols.lds
  

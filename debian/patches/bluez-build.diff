@@ -3,7 +3,7 @@ with BlueZ 5.x.
 
 --- a/configure.ac
 +++ b/configure.ac
-@@ -2077,6 +2077,7 @@
+@@ -2261,6 +2261,7 @@
  					[
  					    #include <bluetooth/bluetooth.h>
  					    #include <bluetooth/hci.h>

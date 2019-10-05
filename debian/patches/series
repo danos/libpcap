@@ -5,6 +5,4 @@ usb-bus-path.diff
 bluez-build.diff
 hurd.diff
 kfreebsd.diff
-man-errors.diff
 pcap-config.diff
-upstream-dcda937d47153d8a3416e855a540253201955f42.diff
