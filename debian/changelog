@@ -2,8 +2,9 @@ libpcap (1.9.1-1) unstable; urgency=medium
 
   * New upstream release, fixes CVE-2018-16301 and CVE-2019-15165
     (closes: #941697).
+  * Export new symbol `pcap_datalink_val_to_description_or_dlt'.
 
- -- Romain Francoise <rfrancoise@debian.org>  Sat, 05 Oct 2019 21:15:22 +0200
+ -- Romain Francoise <rfrancoise@debian.org>  Sun, 06 Oct 2019 17:54:57 +0200
 
 libpcap (1.9.0-2) unstable; urgency=medium
 
