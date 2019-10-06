@@ -16,6 +16,7 @@ libpcap.so.0.8 libpcap0.8 #MINVER#
  pcap_datalink_ext@Base 1.0.0
  pcap_datalink_name_to_val@Base 0.9.8
  pcap_datalink_val_to_description@Base 0.9.8
+ pcap_datalink_val_to_description_or_dlt@Base 1.9.1
  pcap_datalink_val_to_name@Base 0.9.8
  pcap_dispatch@Base 0.9.8
  pcap_dump@Base 0.9.8
