@@ -42,7 +42,7 @@ Subject: [PATCH] Debian GNU/Hurd (with NETDDE) support
  	# --with-pcap=dag is the only way to get here, and it means
 --- /dev/null
 +++ b/pcap-hurd.c
-@@ -0,0 +1,255 @@
+@@ -0,0 +1,264 @@
 +#define _GNU_SOURCE
 +
 +/* XXX Hack not to include the Mach BPF interface */
@@ -294,7 +294,16 @@ Subject: [PATCH] Debian GNU/Hurd (with NETDDE) support
 +}
 +
 +int
-+pcap_platform_finddevs(pcap_if_t **alldevsp, char *errbuf)
++pcap_platform_finddevs(pcap_if_list_t *alldevsp, char *errbuf)
 +{
 +	return 0;
++}
++
++/*
++ * Libpcap version string.
++ */
++const char *
++pcap_lib_version(void)
++{
++	return PCAP_VERSION_STRING;
 +}
