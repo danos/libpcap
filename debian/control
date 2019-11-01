@@ -1,14 +1,18 @@
 Source: libpcap
 Section: devel
 Priority: optional
-Maintainer: Romain Francoise <rfrancoise@debian.org>
+Maintainer: Vyatta Package Maintainers <DL-vyatta-help@att.com>
 Build-Depends: autotools-dev,
                bison,
                debhelper (>= 8.9.7),
                dh-autoreconf,
                flex,
                libbluetooth-dev [linux-any],
-               linux-libc-dev (>= 2.6.27) [i386]
+               linux-libc-dev (>= 2.6.27) [i386],
+               libczmq-dev,
+               libjson-c-dev (>= 0.10),
+               pkg-config,
+               libmnl-dev
 Standards-Version: 3.9.8
 Homepage: http://www.tcpdump.org/
 Vcs-Browser: https://anonscm.debian.org/cgit/users/rfrancoise/libpcap.git/
