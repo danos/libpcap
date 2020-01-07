@@ -78,13 +78,13 @@
  		case PCAP_ERROR_NO_SUCH_DEVICE:
 --- /dev/null
 +++ b/pcap-vyatta-dataplane.c
-@@ -0,0 +1,859 @@
+@@ -0,0 +1,897 @@
 +/*
 + * pcap interface to vyatta dataplane.
 + *
 + * Copyright (c) 2015 by Brocade Communications Systems, Inc.
 + * All rights reserved.
-+ * Copyright (c) 2017-2019, AT&T Intellectual Property.  All rights reserved.
++ * Copyright (c) 2017-2020, AT&T Intellectual Property.  All rights reserved.
 + * SPDX-License-Identifier: BSD-3-Clause
 + */
 +#include <stdio.h>
@@ -116,6 +116,8 @@
 +	struct timespec last_beat;
 +	unsigned num_vplanes;
 +	bool uplink;
++	bool swonly;
++	int bandwidth;
 +	char *uplink_endpoint;
 +	struct pcap_vyatta_per_dp pcap_priv_dp[];
 +};
@@ -466,15 +468,17 @@
 +			/* Local vplane */
 +			sprintf(cmd,
 +				"/opt/vyatta/bin/vplsh -l "
-+				"-c \"capture start %s %d %d\" 2>&1",
++				"-c \"capture start %s %u %u %u %u\" 2>&1",
 +				pcap->opt.device, pcap->opt.promisc,
-+				pcap->snapshot);
++				pcap->snapshot, pcap_priv->swonly,
++				pcap_priv->bandwidth);
 +		else
 +			sprintf(cmd,
 +				"/opt/vyatta/bin/vplsh -f%d "
-+				"-c \"capture start %s %d %d\" 2>&1",
++				"-c \"capture start %s %u %u %u %u\" 2>&1",
 +				vplane_id, pcap->opt.device, pcap->opt.promisc,
-+				pcap->snapshot);
++				pcap->snapshot, pcap_priv->swonly,
++				pcap_priv->bandwidth);
 +
 +		vplout = popen(cmd, "r");
 +
@@ -897,6 +901,28 @@
 +	return device_is_ours(device, vplane_ids, &is_uplink) != 0;
 +}
 +
++static bool
++vyatta_getenv_to_int(const char *name, int *value, int vmin, int vmax)
++{
++	const char *envar;
++	char *endp = NULL;
++	long val;
++
++	*value = 0;
++	envar = getenv(name);
++	if (envar == NULL)
++		return false;
++
++	val = strtol(envar, &endp, 10);
++	if ((endp == NULL) ||
++	    (*endp != '\0') ||
++	    (val > vmax || val < vmin))
++		return false;
++
++	*value = val;
++	return true;
++}
++
 +pcap_t *
 +vyatta_dataplane_create(const char *device, char *ebuf, int *is_ours)
 +{
@@ -906,6 +932,7 @@
 +	int vplane_ids[MAX_VPLANES];
 +	unsigned i, num_vplanes;
 +	bool is_uplink = false;
++	int env_value;
 +
 +	if (num_vplanes = device_is_ours(device, vplane_ids, &is_uplink))
 +		*is_ours = 1;
@@ -925,6 +952,17 @@
 +	pcap_priv = pcap->priv;
 +	pcap_priv->num_vplanes = num_vplanes;
 +	pcap_priv->uplink = is_uplink;
++
++	/*
++	 * See vyatta-tshark.pl over in vyatta-op.
++	 */
++	if (vyatta_getenv_to_int("VYATTA_MONITOR_SWONLY", &env_value,
++				 0, INT_MAX))
++		pcap_priv->swonly = env_value > 0;
++
++	if (vyatta_getenv_to_int("VYATTA_MONITOR_BANDWIDTH", &env_value,
++				 0, INT_MAX))
++		pcap_priv->bandwidth = env_value;
 +
 +	for (i = 0; i < num_vplanes; i++)
 +		pcap_priv->pcap_priv_dp[i].vplane_id = vplane_ids[i];
