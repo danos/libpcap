@@ -1,3 +1,10 @@
+libpcap (1.8.1-3vyatta9) unstable; urgency=medium
+
+  [ Mark Gillott ]
+  * Pass additional parameters to dataplane (Fixes: VRVDR-40983)
+
+ -- Vyatta Package Maintainers <DL-vyatta-help@att.com>  Fri, 03 Apr 2020 12:08:37 +0100
+
 libpcap (1.8.1-3vyatta8) unstable; urgency=medium
 
   * DANOS import master
