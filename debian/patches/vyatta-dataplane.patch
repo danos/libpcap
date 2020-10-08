@@ -78,7 +78,7 @@
  		case PCAP_ERROR_NO_SUCH_DEVICE:
 --- /dev/null
 +++ b/pcap-vyatta-dataplane.c
-@@ -0,0 +1,897 @@
+@@ -0,0 +1,900 @@
 +/*
 + * pcap interface to vyatta dataplane.
 + *
@@ -692,6 +692,9 @@
 +	} else {
 +		return MNL_CB_OK;
 +	}
++
++	if (!linkinfo[IFLA_INFO_KIND])
++		return MNL_CB_OK;
 +
 +	const char *kind = mnl_attr_get_str(linkinfo[IFLA_INFO_KIND]);
 +	if ((strcmp(kind, "gre") == 0) || (strcmp(kind, "gretap") == 0) ||
