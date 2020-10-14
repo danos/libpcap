@@ -78,7 +78,7 @@
  		case PCAP_ERROR_NO_SUCH_DEVICE:
 --- /dev/null
 +++ b/pcap-vyatta-dataplane.c
-@@ -0,0 +1,900 @@
+@@ -0,0 +1,961 @@
 +/*
 + * pcap interface to vyatta dataplane.
 + *
@@ -246,11 +246,72 @@
 +	return 0;
 +}
 +
++/*
++ * Send a request to fetch the packet drop count value via ZMQ.
++ * This is a new message "DROP STATS". The return contains "OK DROP STATS"
++ * followed by the value.
++ * Extract and return this value (consolidated sum from all vplane).
++ */
++static uint64_t
++dataplane_fetch_drop_count(pcap_t *pcap)
++{
++	struct pcap_vyatta_dp *pcap_priv = pcap->priv;
++	struct pcap_vyatta_per_dp *pcap_priv_dp;
++	zmsg_t *msg;
++	char *response;
++	uint64_t pkt_drops = 0;
++	uint64_t drop_count;
++	int i;
++
++	for (i = 0; i < pcap_priv->num_vplanes; i++) {
++		pcap_priv_dp = &pcap_priv->pcap_priv_dp[i];
++
++		msg = zmsg_new();
++		if (msg == NULL) {
++			snprintf(pcap->errbuf, PCAP_ERRBUF_SIZE,
++				 "zmq drop stats msg alloc failed\n");
++			return pkt_drops;
++		}
++
++		zmsg_addstr(msg, "DROP STATS");
++		zmsg_addmem(msg, &pcap_priv_dp->cap_slot, sizeof(u_char));
++
++		if (zmsg_send(&msg, pcap_priv_dp->pcapin_socket) != 0) {
++			zmsg_destroy(&msg);
++			snprintf(pcap->errbuf, PCAP_ERRBUF_SIZE,
++				 "zmq drop stats msg send failed\n");
++			continue;
++		}
++
++		drop_count = 0;
++
++		if (zsock_recv(pcap_priv_dp->pcapin_socket, "s8", &response,
++			       &drop_count) < 0) {
++			snprintf(pcap->errbuf, PCAP_ERRBUF_SIZE,
++				 "zmq drop stats msg receive failed");
++			continue;
++		}
++
++		if ((response == NULL) ||
++		    (strcmp(response, "OK DROP STATS") != 0)) {
++			snprintf(pcap->errbuf, PCAP_ERRBUF_SIZE,
++				 "zmq drop stats failed: %s\n",
++				 response == NULL ? "NULL" : response);
++		}
++
++		free(response);
++
++		pkt_drops += drop_count;
++
++	}
++	return pkt_drops;
++}
++
 +static int
 +vyatta_dataplane_stats(pcap_t *pcap, struct pcap_stat *stats)
 +{
 +	stats->ps_recv = 0;
-+	stats->ps_drop = 0;
++	stats->ps_drop = dataplane_fetch_drop_count(pcap);
 +	stats->ps_ifdrop = 0;
 +	return 0;
 +}
