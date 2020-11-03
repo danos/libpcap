@@ -78,7 +78,7 @@
  		case PCAP_ERROR_NO_SUCH_DEVICE:
 --- /dev/null
 +++ b/pcap-vyatta-dataplane.c
-@@ -0,0 +1,961 @@
+@@ -0,0 +1,997 @@
 +/*
 + * pcap interface to vyatta dataplane.
 + *
@@ -252,25 +252,26 @@
 + * followed by the value.
 + * Extract and return this value (consolidated sum from all vplane).
 + */
-+static uint64_t
-+dataplane_fetch_drop_count(pcap_t *pcap)
++static int
++dataplane_fetch_drop_count(pcap_t *pcap, uint64_t *pkt_drops)
 +{
 +	struct pcap_vyatta_dp *pcap_priv = pcap->priv;
 +	struct pcap_vyatta_per_dp *pcap_priv_dp;
 +	zmsg_t *msg;
 +	char *response;
-+	uint64_t pkt_drops = 0;
 +	uint64_t drop_count;
-+	int i;
++	int i, rc;
 +
 +	for (i = 0; i < pcap_priv->num_vplanes; i++) {
 +		pcap_priv_dp = &pcap_priv->pcap_priv_dp[i];
++
++		rc = -1;
 +
 +		msg = zmsg_new();
 +		if (msg == NULL) {
 +			snprintf(pcap->errbuf, PCAP_ERRBUF_SIZE,
 +				 "zmq drop stats msg alloc failed\n");
-+			return pkt_drops;
++			return rc;
 +		}
 +
 +		zmsg_addstr(msg, "DROP STATS");
@@ -279,41 +280,76 @@
 +		if (zmsg_send(&msg, pcap_priv_dp->pcapin_socket) != 0) {
 +			zmsg_destroy(&msg);
 +			snprintf(pcap->errbuf, PCAP_ERRBUF_SIZE,
-+				 "zmq drop stats msg send failed\n");
-+			continue;
++				 "zmq drop stats msg send failed - %s \n",
++				 zmq_strerror(errno));
++			return rc;
 +		}
 +
 +		drop_count = 0;
 +
-+		if (zsock_recv(pcap_priv_dp->pcapin_socket, "s8", &response,
-+			       &drop_count) < 0) {
-+			snprintf(pcap->errbuf, PCAP_ERRBUF_SIZE,
-+				 "zmq drop stats msg receive failed");
-+			continue;
++		rc = zsock_recv(pcap_priv_dp->pcapin_socket, "s8", &response,
++				&drop_count);
++		if (rc < 0) {
++			/*
++			 * zsock_recv can fail if its interrupted. Sets errno
++			 * accordingly (EINTR)
++			 * In this error condition, subsequent zmsg_send()
++			 * also fails (Error string being
++			 * "Operation cannot be accomplished in current state")
++			 * The next message being "STOP" on cleanup fails to
++			 * reach the datapath because of the send error.
++			 * There is no way to reset the socket other than to
++			 * retry and wait for the reply for the earlier
++			 * message. In case of any other error return -1 with
++			 * the error message.
++			 */
++			if(errno == EINTR)
++				rc = zsock_recv(pcap_priv_dp->pcapin_socket,
++						"s8", &response, &drop_count);
++
++			if (rc < 0) {
++				snprintf(pcap->errbuf, PCAP_ERRBUF_SIZE,
++					 "zmq drop stats msg receive failed - %s \n",
++					 zmq_strerror(errno));
++				return rc;
++			}
 +		}
 +
 +		if ((response == NULL) ||
 +		    (strcmp(response, "OK DROP STATS") != 0)) {
++			/*
++			 * rc is 0 here but the response is either
++			 * NULL or is not the expected response.
++			 * Return an error here. This implies that the drop
++			 * count is not valid even if one vplane returns error
++			 */
 +			snprintf(pcap->errbuf, PCAP_ERRBUF_SIZE,
 +				 "zmq drop stats failed: %s\n",
 +				 response == NULL ? "NULL" : response);
++			return -1;
 +		}
 +
 +		free(response);
 +
-+		pkt_drops += drop_count;
++		*pkt_drops += drop_count;
 +
 +	}
-+	return pkt_drops;
++	return rc;
 +}
 +
 +static int
 +vyatta_dataplane_stats(pcap_t *pcap, struct pcap_stat *stats)
 +{
++	uint64_t drops = 0;
++	int rc;
++
++	rc = dataplane_fetch_drop_count(pcap, &drops);
++
 +	stats->ps_recv = 0;
-+	stats->ps_drop = dataplane_fetch_drop_count(pcap);
++	stats->ps_drop = drops;
 +	stats->ps_ifdrop = 0;
-+	return 0;
++
++	return rc;
 +}
 +
 +/* Send a heartbeat if we haven't done so in a while. */
