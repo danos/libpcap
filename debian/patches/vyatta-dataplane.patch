@@ -1,6 +1,6 @@
 --- a/Makefile.in
 +++ b/Makefile.in
-@@ -61,8 +61,10 @@ DEFS = -DBUILDING_PCAP @DEFS@ @V_DEFS@
+@@ -64,8 +64,10 @@ DEFS = -DBUILDING_PCAP -Dpcap_EXPORTS @D
  ADDLOBJS = @ADDLOBJS@
  ADDLARCHIVEOBJS = @ADDLARCHIVEOBJS@
  LIBS = @LIBS@
@@ -11,80 +11,26 @@
  LDFLAGS = @LDFLAGS@ ${CROSSFLAGS}
  DYEXT = @DYEXT@
  V_RPATH_OPT = @V_RPATH_OPT@
-@@ -97,7 +99,7 @@ FSRC =  @V_FINDALLDEVS@
- SSRC =  @SSRC@
- CSRC =	pcap.c inet.c fad-helpers.c gencode.c optimize.c nametoaddr.c \
- 	etherent.c savefile.c sf-pcap.c sf-pcap-ng.c pcap-common.c \
--	bpf_image.c bpf_dump.c
-+	bpf_image.c bpf_dump.c pcap-vyatta-dataplane.c
- GENSRC = scanner.c grammar.c bpf_filter.c version.c
+@@ -105,7 +107,8 @@ SSRC =  @SSRC@
+ CSRC =	pcap.c gencode.c optimize.c nametoaddr.c etherent.c \
+ 	fmtutils.c \
+ 	savefile.c sf-pcap.c sf-pcapng.c pcap-common.c \
+-	bpf_image.c bpf_filter.c bpf_dump.c
++	bpf_image.c bpf_filter.c bpf_dump.c \
++	pcap-vyatta-dataplane.c
+ GENSRC = scanner.c grammar.c
  LIBOBJS = @LIBOBJS@
  
---- a/fad-helpers.c
-+++ b/fad-helpers.c
-@@ -72,6 +72,7 @@ struct rtentry;		/* declarations in <net
- #endif
- 
- #include "pcap-int.h"
-+#include "pcap-vyatta-dataplane.h"
- 
- #ifdef HAVE_OS_PROTO_H
- #include "os-proto.h"
-@@ -443,23 +444,31 @@ add_or_find_if(pcap_if_t **curdev_ret, p
- 			free(en_name);
- 		} else
- #endif /* __APPLE */
--		p = pcap_create(name, open_errbuf);
--		if (p == NULL) {
-+		if (device_on_vyatta_dataplane(name))
-+			ret = 0;
-+		else {
-+			p = pcap_create(name, open_errbuf);
-+			if (p == NULL) {
-+				/*
-+				 * The attempt to create the pcap_t failed;
-+				 * that's probably an indication that we're
-+				 * out of memory.
-+				 *
-+				 * Don't bother including this interface,
-+				 * but don't treat it as an error.
-+				 */
-+				*curdev_ret = NULL;
-+				return (0);
-+			}
- 			/*
--			 * The attempt to create the pcap_t failed;
--			 * that's probably an indication that we're
--			 * out of memory.
--			 *
--			 * Don't bother including this interface,
--			 * but don't treat it as an error.
-+			 * Small snaplen, so we don't try to allocate
-+			 * much memory.
- 			 */
--			*curdev_ret = NULL;
--			return (0);
-+			pcap_set_snaplen(p, 68);
-+			ret = pcap_activate(p);
-+
-+			pcap_close(p);
- 		}
--		/* Small snaplen, so we don't try to allocate much memory. */
--		pcap_set_snaplen(p, 68);
--		ret = pcap_activate(p);
--		pcap_close(p);
- 		switch (ret) {
- 
- 		case PCAP_ERROR_NO_SUCH_DEVICE:
 --- /dev/null
 +++ b/pcap-vyatta-dataplane.c
-@@ -0,0 +1,997 @@
+@@ -0,0 +1,999 @@
 +/*
 + * pcap interface to vyatta dataplane.
 + *
 + * Copyright (c) 2015 by Brocade Communications Systems, Inc.
 + * All rights reserved.
 + * Copyright (c) 2017-2020, AT&T Intellectual Property.  All rights reserved.
++ * Copyright (c) 2021, Ciena Corporation.  All rights reserved.
 + * SPDX-License-Identifier: BSD-3-Clause
 + */
 +#include <stdio.h>
@@ -100,6 +46,7 @@
 +#endif
 +#include "pcap-int.h"
 +#include "pcap-vyatta-dataplane.h"
++#undef SOCKET	/* czmq does a typedef of SOCKET to int */
 +#include <czmq.h>
 +#include <json.h>
 +
@@ -1071,7 +1018,7 @@
 +}
 +
 +int
-+vyatta_dataplane_findalldevs(pcap_if_t **alldevsp, char *err_str)
++vyatta_dataplane_findalldevs(pcap_if_list_t *alldevsp, char *err_str)
 +{
 +	/* silent failure - we don't support capturing on all devices */
 +	return 0;
@@ -1084,12 +1031,20 @@
 +#include <stdbool.h>
 +
 +bool device_on_vyatta_dataplane(const char *device);
-+int vyatta_dataplane_findalldevs(pcap_if_t **alldevsp, char *err_str);
++int vyatta_dataplane_findalldevs(pcap_if_list_t *alldevsp, char *err_str);
 +pcap_t *vyatta_dataplane_create(const char *device, char *ebuf, int *is_ours);
 +#endif /* _PCAP_VYATTA_DATAPLANE_H_ */
 --- a/pcap.c
 +++ b/pcap.c
-@@ -245,6 +245,8 @@ pcap_next(pcap_t *p, struct pcap_pkthdr
+@@ -77,6 +77,7 @@ struct rtentry;		/* declarations in <net
+ #endif
+ 
+ #include "pcap-int.h"
++#include "pcap-vyatta-dataplane.h"
+ 
+ #include "optimize.h"
+ 
+@@ -455,6 +456,8 @@ pcap_next(pcap_t *p, struct pcap_pkthdr
  	return (pkt);
  }
  
@@ -1098,12 +1053,26 @@
  int
  pcap_next_ex(pcap_t *p, struct pcap_pkthdr **pkt_header,
      const u_char **pkt_data)
-@@ -326,6 +328,8 @@ static struct capture_source_type {
- #ifdef PCAP_SUPPORT_DBUS
- 	{ dbus_findalldevs, dbus_create },
+@@ -549,6 +552,8 @@ static struct capture_source_type {
+ #ifdef PCAP_SUPPORT_RDMASNIFF
+ 	{ rdmasniff_findalldevs, rdmasniff_create },
  #endif
 +	{ vyatta_dataplane_findalldevs, vyatta_dataplane_create },
 +
  	{ NULL, NULL }
  };
  
+@@ -937,6 +942,13 @@ add_addr_to_if(pcap_if_list_t *devlistp,
+ 	pcap_if_t *curdev;
+ 
+ 	/*
++	 * If the device is on the dataplane, we don't need to
++	 * add the device here.
++	 */
++	if (device_on_vyatta_dataplane(name))
++		return (0);
++
++	/*
+ 	 * Check whether the device exists and, if not, add it.
+ 	 */
+ 	curdev = find_or_add_if(devlistp, name, if_flags, get_flags_func,
