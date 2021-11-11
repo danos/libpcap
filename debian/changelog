@@ -1,3 +1,49 @@
+libpcap (1.9.1-2vyatta1) unstable; urgency=medium
+
+  [ Romain Francoise ]
+  * Fix typo in debian/changelog
+  * Don't include arch-dependent paths in pcap-config --libs output
+  * Make libpcap0.8-dev Multi-Arch: same
+  * Bump Standards-Version to 4.1.0
+  * Update debian/changelog
+  * Remove unused RPATH handling from pcap-config (#876123)
+  * Make libpcap-dev arch:any to allow cross-building (#820829)
+  * Update debian/changelog
+  * Bump Standards-Version to 4.1.2
+  * Use new URLs on salsa.debian.org for Vcs-* fields
+  * Make transitional package libpcap-dev Multi-Arch: same
+  * Use /usr/share/dpkg/architecture.mk instead of setting DEB_HOST_ARCH_OS
+  * Make libpcap0.8-dbg Priority: optional
+  * Update debian/changelog
+  * Add upstream signing key and change uscan configuration
+  * Import libpcap upstream release 1.9.0
+  * Refresh patches against new upstream
+  * debian/libpcap0.8.docs: README is now README.md
+  * Update debian/changelog
+  * Export symbols new in 1.9.0
+  * Cherry-pick dcda937d4715 from upstream (#909749)
+  * Update debian/changelog
+
+  [ Luca Boccassi ]
+  * Refresh shared-lib.diff to restore installation of libpcap.pc.
+  * Install libpcap.pc in libpcap0.8-dev.
+
+  [ Romain Francoise ]
+  * Bump Standards-Version to 4.4.0
+  * Update debian/changelog
+  * Import libpcap upstream release 1.9.1
+  * Refresh patches against new upstream
+  * Update debian/changelog
+  * Update shared library changes
+  * Update debian/changelog
+  * Update Hurd patch to fix FTBFS
+  * Update debian/changelog
+
+  [ Charles (Chas) Williams ]
+  * debian: update dataplane support (Bugfix: VRVDR-56507)
+
+ -- Charles (Chas) Williams <ciwillia@vyatta.att-mail.com>  Thu, 11 Nov 2021 14:38:16 -0500
+
 libpcap (1.8.1-3vyatta11) unstable; urgency=medium
 
   [ Ramesh Devarajan ]
