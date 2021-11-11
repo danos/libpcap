@@ -11,17 +11,26 @@ Subject: [PATCH] Debian GNU/Hurd (with NETDDE) support
 
 --- a/configure.ac
 +++ b/configure.ac
-@@ -361,6 +361,8 @@
- 	VALGRINDTEST=valgrindtest
- elif test -r /usr/include/net/raw.h ; then
- 	V_PCAP=snoop
-+elif test -r /usr/include/hurd.h ; then
-+	V_PCAP=hurd
- elif test -r /usr/include/odmi.h ; then
- 	#
- 	# On AIX, the BPF devices might not yet be present - they're
-@@ -601,6 +603,10 @@
- 		    ])
+@@ -687,7 +687,7 @@
+ 	fi
+ 	AC_CHECK_HEADERS(net/pfilt.h net/enet.h)
+ 	AC_CHECK_HEADERS(net/nit.h sys/net/nit.h)
+-	AC_CHECK_HEADERS(linux/socket.h net/raw.h sys/dlpi.h)
++	AC_CHECK_HEADERS(linux/socket.h net/raw.h sys/dlpi.h hurd.h)
+ 
+ 	if test "$ac_cv_lbl_bpf_h_defines_biocsetif" = yes; then
+ 		#
+@@ -749,6 +749,8 @@
+ 		# DLPI on pre-Solaris 11 SunOS 5, HP-UX, possibly others.
+ 		#
+ 		V_PCAP=dlpi
++	elif test "$ac_cv_header_hurd_h" = yes; then
++		V_PCAP=hurd
+ 	else
+ 		#
+ 		# Nothing we support.
+@@ -981,6 +983,10 @@
+ 	    ])
  	;;
  
 +hurd)
@@ -33,7 +42,7 @@ Subject: [PATCH] Debian GNU/Hurd (with NETDDE) support
  	# --with-pcap=dag is the only way to get here, and it means
 --- /dev/null
 +++ b/pcap-hurd.c
-@@ -0,0 +1,255 @@
+@@ -0,0 +1,264 @@
 +#define _GNU_SOURCE
 +
 +/* XXX Hack not to include the Mach BPF interface */
@@ -285,7 +294,16 @@ Subject: [PATCH] Debian GNU/Hurd (with NETDDE) support
 +}
 +
 +int
-+pcap_platform_finddevs(pcap_if_t **alldevsp, char *errbuf)
++pcap_platform_finddevs(pcap_if_list_t *alldevsp, char *errbuf)
 +{
 +	return 0;
++}
++
++/*
++ * Libpcap version string.
++ */
++const char *
++pcap_lib_version(void)
++{
++	return PCAP_VERSION_STRING;
 +}

@@ -1,10 +1,8 @@
 shared-lib.diff
-linker-script.diff
 man-section.diff
 usb-bus-path.diff
 bluez-build.diff
 hurd.diff
 kfreebsd.diff
-disable-remote.diff
-man-errors.diff
+pcap-config.diff
 vyatta-dataplane.patch
