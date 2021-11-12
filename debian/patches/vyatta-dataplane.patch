@@ -23,7 +23,7 @@
  
 --- /dev/null
 +++ b/pcap-vyatta-dataplane.c
-@@ -0,0 +1,999 @@
+@@ -0,0 +1,1010 @@
 +/*
 + * pcap interface to vyatta dataplane.
 + *
@@ -488,6 +488,17 @@
 +			 "zpoller create failed\n");
 +		return PCAP_ERROR;
 +	}
++
++	/*
++	 * Turn a negative snapshot value (invalid), a snapshot value of
++	 * 0 (unspecified), or a value bigger than the normal maximum
++	 * value, into the maximum allowed value.
++	 *
++	 * If some application really *needs* a bigger snapshot
++	 * length, we should just increase MAXIMUM_SNAPLEN.
++	 */
++	if (pcap->snapshot <= 0 || pcap->snapshot > MAXIMUM_SNAPLEN)
++		pcap->snapshot = MAXIMUM_SNAPLEN;
 +
 +	pcap->bufsize = pcap->snapshot;
 +	pcap->buffer = malloc(pcap->bufsize);
