@@ -23,7 +23,7 @@
  
 --- /dev/null
 +++ b/pcap-vyatta-dataplane.c
-@@ -0,0 +1,1010 @@
+@@ -0,0 +1,1009 @@
 +/*
 + * pcap interface to vyatta dataplane.
 + *
@@ -46,7 +46,6 @@
 +#endif
 +#include "pcap-int.h"
 +#include "pcap-vyatta-dataplane.h"
-+#undef SOCKET	/* czmq does a typedef of SOCKET to int */
 +#include <czmq.h>
 +#include <json.h>
 +
@@ -1087,3 +1086,139 @@
  	 * Check whether the device exists and, if not, add it.
  	 */
  	curdev = find_or_add_if(devlistp, name, if_flags, get_flags_func,
+--- a/pcap/socket.h
++++ b/pcap/socket.h
+@@ -62,6 +62,9 @@
+    * tv_usec value of struct timeval.
+    */
+   typedef long suseconds_t;
++
++  /* In Winsock, a socket handle is of type SOCKET. */
++  #define PCAP_SOCKET SOCKET
+ #else /* _WIN32 */
+   #include <sys/types.h>
+   #include <sys/socket.h>
+@@ -72,11 +75,9 @@
+   /*!
+    * \brief In Winsock, a socket handle is of type SOCKET; in UN*X, it's
+    * a file descriptor, and therefore a signed integer.
+-   * We define SOCKET to be a signed integer on UN*X, so that it can
+-   * be used on both platforms.
+    */
+-  #ifndef SOCKET
+-    #define SOCKET int
++  #ifndef PCAP_SOCKET
++    #define PCAP_SOCKET int
+   #endif
+ 
+   /*!
+--- a/sockutils.c
++++ b/sockutils.c
+@@ -293,9 +293,9 @@ static int sock_ismcastaddr(const struct
+  * if everything is fine, INVALID_SOCKET if some errors occurred. The error message is returned
+  * in the 'errbuf' variable.
+  */
+-SOCKET sock_open(struct addrinfo *addrinfo, int server, int nconn, char *errbuf, int errbuflen)
++PCAP_SOCKET sock_open(struct addrinfo *addrinfo, int server, int nconn, char *errbuf, int errbuflen)
+ {
+-	SOCKET sock;
++	PCAP_SOCKET sock;
+ #if defined(SO_NOSIGPIPE) || defined(IPV6_V6ONLY) || defined(IPV6_BINDV6ONLY)
+ 	int on = 1;
+ #endif
+@@ -486,7 +486,7 @@ SOCKET sock_open(struct addrinfo *addrin
+  * \return '0' if everything is fine, '-1' if some errors occurred. The error message is returned
+  * in the 'errbuf' variable.
+  */
+-int sock_close(SOCKET sock, char *errbuf, int errbuflen)
++int sock_close(PCAP_SOCKET sock, char *errbuf, int errbuflen)
+ {
+ 	/*
+ 	 * SHUT_WR: subsequent calls to the send function are disallowed.
+@@ -775,7 +775,7 @@ int sock_initaddress(const char *host, c
+  * '-2' if we got one of those errors.
+  * For errors, an error message is returned in the 'errbuf' variable.
+  */
+-int sock_send(SOCKET sock, const char *buffer, size_t size,
++int sock_send(PCAP_SOCKET sock, const char *buffer, size_t size,
+     char *errbuf, int errbuflen)
+ {
+ 	int remaining;
+@@ -970,7 +970,7 @@ int sock_bufferize(const char *buffer, i
+  * The error message is returned in the 'errbuf' variable.
+  */
+ 
+-int sock_recv(SOCKET sock, void *buffer, size_t size, int flags,
++int sock_recv(PCAP_SOCKET sock, void *buffer, size_t size, int flags,
+     char *errbuf, int errbuflen)
+ {
+ 	char *bufp = buffer;
+@@ -1058,7 +1058,7 @@ int sock_recv(SOCKET sock, void *buffer,
+  *
+  * Returns the size of the datagram on success or -1 on error.
+  */
+-int sock_recv_dgram(SOCKET sock, void *buffer, size_t size,
++int sock_recv_dgram(PCAP_SOCKET sock, void *buffer, size_t size,
+     char *errbuf, int errbuflen)
+ {
+ 	ssize_t nread;
+@@ -1192,7 +1192,7 @@ int sock_recv_dgram(SOCKET sock, void *b
+  * \return '0' if everything is fine, '-1' if some errors occurred.
+  * The error message is returned in the 'errbuf' variable.
+  */
+-int sock_discard(SOCKET sock, int size, char *errbuf, int errbuflen)
++int sock_discard(PCAP_SOCKET sock, int size, char *errbuf, int errbuflen)
+ {
+ #define TEMP_BUF_SIZE 32768
+ 
+@@ -1449,7 +1449,7 @@ int sock_cmpaddr(struct sockaddr_storage
+  * \warning If the socket is using a connectionless protocol, the address may not be available
+  * until I/O occurs on the socket.
+  */
+-int sock_getmyinfo(SOCKET sock, char *address, int addrlen, char *port, int portlen, int flags, char *errbuf, int errbuflen)
++int sock_getmyinfo(PCAP_SOCKET sock, char *address, int addrlen, char *port, int portlen, int flags, char *errbuf, int errbuflen)
+ {
+ 	struct sockaddr_storage mysockaddr;
+ 	socklen_t sockaddrlen;
+--- a/sockutils.h
++++ b/sockutils.h
+@@ -128,21 +128,21 @@ void sock_geterror(const char *caller, c
+ int sock_initaddress(const char *address, const char *port,
+     struct addrinfo *hints, struct addrinfo **addrinfo,
+     char *errbuf, int errbuflen);
+-int sock_recv(SOCKET sock, void *buffer, size_t size, int receiveall,
++int sock_recv(PCAP_SOCKET sock, void *buffer, size_t size, int receiveall,
+     char *errbuf, int errbuflen);
+-int sock_recv_dgram(SOCKET sock, void *buffer, size_t size,
++int sock_recv_dgram(PCAP_SOCKET sock, void *buffer, size_t size,
+     char *errbuf, int errbuflen);
+-SOCKET sock_open(struct addrinfo *addrinfo, int server, int nconn, char *errbuf, int errbuflen);
+-int sock_close(SOCKET sock, char *errbuf, int errbuflen);
++PCAP_SOCKET sock_open(struct addrinfo *addrinfo, int server, int nconn, char *errbuf, int errbuflen);
++int sock_close(PCAP_SOCKET sock, char *errbuf, int errbuflen);
+ 
+-int sock_send(SOCKET sock, const char *buffer, size_t size,
++int sock_send(PCAP_SOCKET sock, const char *buffer, size_t size,
+     char *errbuf, int errbuflen);
+ int sock_bufferize(const char *buffer, int size, char *tempbuf, int *offset, int totsize, int checkonly, char *errbuf, int errbuflen);
+-int sock_discard(SOCKET sock, int size, char *errbuf, int errbuflen);
++int sock_discard(PCAP_SOCKET sock, int size, char *errbuf, int errbuflen);
+ int	sock_check_hostlist(char *hostlist, const char *sep, struct sockaddr_storage *from, char *errbuf, int errbuflen);
+ int sock_cmpaddr(struct sockaddr_storage *first, struct sockaddr_storage *second);
+ 
+-int sock_getmyinfo(SOCKET sock, char *address, int addrlen, char *port, int portlen, int flags, char *errbuf, int errbuflen);
++int sock_getmyinfo(PCAP_SOCKET sock, char *address, int addrlen, char *port, int portlen, int flags, char *errbuf, int errbuflen);
+ 
+ int sock_getascii_addrport(const struct sockaddr_storage *sockaddr, char *address, int addrlen, char *port, int portlen, int flags, char *errbuf, int errbuflen);
+ int sock_present2network(const char *address, struct sockaddr_storage *sockaddr, int addr_family, char *errbuf, int errbuflen);
+--- a/pcap/pcap.h
++++ b/pcap/pcap.h
+@@ -961,7 +961,7 @@ PCAP_API struct pcap_samp *pcap_setsampl
+ /* Maximum length of an host name (needed for the RPCAP active mode) */
+ #define RPCAP_HOSTLIST_SIZE 1024
+ 
+-PCAP_API SOCKET	pcap_remoteact_accept(const char *address, const char *port,
++PCAP_API PCAP_SOCKET	pcap_remoteact_accept(const char *address, const char *port,
+ 	    const char *hostlist, char *connectinghost,
+ 	    struct pcap_rmtauth *auth, char *errbuf);
+ PCAP_API int	pcap_remoteact_list(char *hostlist, char sep, int size,
